@@ -1,5 +1,3 @@
-// https://observablehq.com/@d3/sankey-diagram?collection=@d3/d3-sankey
-
 chart = {
   const svg = d3.create("svg")
       .attr("viewBox", [0, 0, width, height]);
@@ -17,37 +15,18 @@ chart = {
       .attr("fill", d => color(d.name))
       .append("title")
       .text(d => `${d.name}\n${format(d.value)}`);
-
-  const link = svg.append("g")
+  
+ const link = svg.append("g")
       .attr("fill", "none")
       .attr("stroke-opacity", 0.5)
       .selectAll("g")
       .data(links)
       .join("g")
       .style("mix-blend-mode", "multiply");
-
-  if (edgeColor === "path") {
-    const gradient = link.append("linearGradient")
-        .attr("id", d => (d.uid = DOM.uid("link")).id)
-        .attr("gradientUnits", "userSpaceOnUse")
-        .attr("x1", d => d.source.x1)
-        .attr("x2", d => d.target.x0);
-
-    gradient.append("stop")
-        .attr("offset", "0%")
-        .attr("stop-color", d => color(d.source.name));
-
-    gradient.append("stop")
-        .attr("offset", "100%")
-        .attr("stop-color", d => color(d.target.name));
-  }
-
+ 
   link.append("path")
       .attr("d", d3.sankeyLinkHorizontal())
-      .attr("stroke", d => edgeColor === "none" ? "#aaa"
-          : edgeColor === "path" ? d.uid 
-          : edgeColor === "input" ? color(d.source.name) 
-          : color(d.target.name))
+      .attr("stroke", d => color(d.source.name))
       .attr("stroke-width", d => Math.max(1, d.width));
 
   link.append("title")
@@ -62,17 +41,13 @@ chart = {
       .attr("y", d => (d.y1 + d.y0) / 2)
       .attr("dy", "0.35em")
       .attr("text-anchor", d => d.x0 < width / 2 ? "start" : "end")
-      .text(d => d.name)
-      .append("tspan")
-      .attr("fill-opacity", 0.7)
-      .text(d => ` ${d.value.toLocaleString()}`);
+      .text(d => d.name);
 
   return svg.node();
 }
 
 sankey = {
   const sankey = d3.sankey()
-      .nodeAlign(d3[`sankey${align[0].toUpperCase()}${align.slice(1)}`])
       .nodeWidth(15)
       .nodePadding(10)
       .extent([[1, 5], [width - 1, height - 5]]);
@@ -92,9 +67,10 @@ color = {
   return name => color(name.replace(/ .*/, ""));
 }
 
-data = d3.json("https://gist.githubusercontent.com/mryu-uiuc/383e976ff0d49e28157de76ba78e321b/raw/e6593821bc22d105af38d60cef427bacbfde8ba3/sankey-test.json")
+data = d3.json("https://gist.githubusercontent.com/mryu-uiuc/383e976ff0d49e28157de76ba78e321b/raw/c28471c053378f6e8e095c2b604011818a300bcd/sankey-test.json")
+
+height = 600
 
 width = 975
-height = 600
 
 d3 = require("d3@5", "d3-sankey@0.12")
